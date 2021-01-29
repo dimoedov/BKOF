@@ -1,21 +1,14 @@
 import React, {Component} from 'react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf-with-html2canvas';
+import {Image} from "react-bootstrap";
 import './pdf.css'
-import BootstrapTable from "react-bootstrap-table-next";
-import filterFactory from "react-bootstrap-table2-filter";
-import ToolkitProvider from "react-bootstrap-table2-toolkit";
-function priceFormatter(cell, row) {
-    return (
-        <span>{ cell } Руб.</span>
-    );
-}
-const today = new Date();
+
+
 class Cheklist extends Component{
     constructor(props) {
         super(props);
         this.state= {
-            master: localStorage.getItem('fio'),
             id_new_fix: localStorage.getItem('fix_id'),
             client: '',
             object: '',
@@ -25,17 +18,6 @@ class Cheklist extends Component{
                     dataField: '_id',
                     isKey: true,
                     hidden: true
-                },
-                {
-                    dataField: 'name',
-                    text: 'Услуга',
-                    footer: 'Итого:'
-                },
-                {
-                    dataField: 'price',
-                    text: 'Цена',
-                    formatter: priceFormatter,
-                    footer: columnData => columnData.reduce((acc, item) => acc + item, 0)+' Руб.',
                 },
             ]
         }
@@ -49,19 +31,19 @@ class Cheklist extends Component{
                 pdf.addImage(imgData, 'JPEG', 0, 0);
                 pdf.save("download.pdf");
                 localStorage.removeItem('fix_id');
-                window.location.assign('http://localhost:3000/my-fix/');
+                // window.location.assign('http://localhost:3000/my-fix/');
             })
         ;
     }
 
     handleRedirect() {
         localStorage.removeItem('fix_id');
-        window.location.assign('http://localhost:3000/my-fix/');
+        // window.location.assign('http://localhost:3000/my-fix/');
     }
     componentDidMount() {
-        if (this.state.id_new_fix === null){
-            window.location.assign('http://localhost:3000/');
-        }
+        // if (this.state.id_new_fix === null){
+        //     window.location.assign('http://localhost:3000/');
+        // }
         let formBody = [];
         for (let prop in this.state) {
             let encodedKey = encodeURIComponent(prop);
@@ -85,7 +67,6 @@ class Cheklist extends Component{
             body: formBody
         }).then(res => res.json())
             .then(data => {
-                this.setState({client: data[1]});
                 this.setState({object: data[0]})
             })
 
@@ -95,76 +76,58 @@ class Cheklist extends Component{
         return (
             <div>
                 <div className="mb5">
-                    <button onClick={this.printDocument} className='btn-outline-primary'>Сохранить чек</button>
-                    <button onClick={this.handleRedirect} className='btn-outline-danger'>Не сохранять чек</button>
+                    <button onClick={this.printDocument} className='btn-outline-primary'>Сохранить акт</button>
+                    <button onClick={this.handleRedirect} className='btn-outline-danger'>Не сохранять акт</button>
                 </div>
                 <div id="divToPrint" className="mt4">
-                    <div>
-                        <div className="invoice-box">
-                            <table cellPadding="0" cellSpacing="0">
-                                <tr className="top">
-                                    <td colSpan="2">
-                                        <table>
-                                            <tr>
-                                                <td>
-                                                    Дата: {`${today.getDate()}.${today.getMonth() + 1}.${today.getFullYear()}.`}
-                                                </td>
-                                                <td>
-                                                    Компания: OOO "БКОФ" / BKOF Udp.
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </td>
-                                </tr>
-                                <tr className="information">
-                                    <td colSpan="2">
-                                        <table>
-                                            <tr>
-                                                <td>
-                                                    Исполнитель: {this.state.master}
-                                                </td>
-                                                <td>
-                                                    Номер: {this.state.id_new_fix}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    Заказчик: {this.state.client}
-                                                </td>
-                                                <td>
-                                                    Объект: {this.state.object}
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                    <div>
-                        <ToolkitProvider
-                            keyField={'_id'}
-                            data={ this.state.products }
-                            columns={ this.state.columns }
-                        >
-                            {
-                                props => (
-                                    <div>
-                                        <BootstrapTable
-                                            keyField={'_id'}
-                                            data={ this.state.products }
-                                            columns={ this.state.columns }
-                                            filter={ filterFactory() }
-                                            tabIndexCell
-                                            bordered={ false }
-
-                                            { ...props.baseProps }
-                                        />
-                                    </div>
-                                )
-                            }
-                        </ToolkitProvider>
-                    </div>
+                    <table className={'own_table'}>
+                        <tr>
+                            <td className={'td_left'}>
+                                <p>
+                                    «BKOF » Ltd.
+                                </p>
+                                <p>
+                                    Nizhniy Novgorod,
+                                </p>
+                                <p>
+                                    Rozhdestvenskaya street 16,6
+                                </p>
+                                <p>
+                                    Phone: +7 (831) 435 13 06
+                                </p>
+                                <p>
+                                    e-mail: ooobkof@gmail.com
+                                </p>
+                            </td>
+                            <td className={'td_logo'}>
+                                <Image src='/images/Auth/Auth_err.jpg' width='100' rounded/>
+                            </td>
+                            <td className={'td_right'}>
+                                <p>
+                                    ООО «БКОФ»
+                                </p>
+                                <p>
+                                    603001 г. Нижний Новгород, ул.
+                                </p>
+                                <p>
+                                    603001 г. Нижний Новгород, ул.
+                                </p>
+                                <p>
+                                    Тел. +7 (831) 435 13 06
+                                </p>
+                                <p>
+                                    e-mail: ooobkof@gmail.com
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td className={'td_mid_photo'}>
+                                <p>s</p>
+                                <p>s</p>
+                                <p>s</p>
+                            </td>
+                        </tr>
+                    </table>
                 </div>
             </div>
         );

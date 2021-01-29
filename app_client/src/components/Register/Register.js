@@ -106,7 +106,7 @@ class Register extends Component {
     render() {
         if (this.state.serverOtvet.success){
             localStorage.setItem('register', 'true')
-            return window.location.assign('http://localhost:3000/auth');
+            return window.location.assign('http://'+document.location.host+'/auth');
         }else{
             return (
                 <div>

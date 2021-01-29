@@ -11,10 +11,6 @@ let ClientSchema = new Schema({
         type: String,
         required: false
     },
-    contacts: {
-        type: String,
-        required: false
-    },
     current_master_id: {
         type: String,
         required: false

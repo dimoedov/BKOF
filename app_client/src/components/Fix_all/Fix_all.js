@@ -48,7 +48,7 @@ class MYSELECT_SERVICES extends React.Component {
             },
             body: formBody
         }).then(res => res.json())
-            .then(data =>  window.location.assign('http://localhost:3000/All_fix/'))
+            .then(data =>  window.location.assign('http://'+document.location.host+'/All_fix/'))
             .catch(err => console.log("err: =" + err));
     };
 

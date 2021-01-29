@@ -21,18 +21,21 @@ class Add_fix extends Component{
         this.state= {
             service: '',
             object: '',
-            client: '',
+            srv_spec: '',
             dateStart: `${ye}-${mo}-${da}`,
-            dateCirca: '',
-            dateEnd: '',
-            etc: '',
-            price: '',
+            print: '',
+            port_obs: '',
+            text_body: '',
+            time: '',
+            equiment: '',
+            serial_nomber: '',
+            materials_name: '',
+            materials_units: '',
+            materials_qty: '',
             objects_list: null,
-            clients_list: null,
-            services_list: null,
+            srv_spec_list: null,
             selectedOption_objects: null,
-            selectedOption_clients: null,
-            selectedOption_services: null,
+            selectedOption_srv_spec: null,
             serverOtvet: ''
         }
     }
@@ -59,62 +62,28 @@ class Add_fix extends Component{
             .then(data => this.setState({object: data}))
             .catch(err => console.log("err: =" + err));
     };
-    handleChange_clients = selectedOption_clients => {
-        this.setState({ selectedOption_clients });
+    handleChange_srv_spec = selectedOption_srv_spec => {
+        this.setState({ selectedOption_srv_spec });
         let formBody=[];
-        for (let prop in selectedOption_clients){
-            if (prop === 'value')
-            formBody.push(encodeURIComponent('name') + "=" + encodeURIComponent(selectedOption_clients[prop]));
+        for (let prop in selectedOption_srv_spec){
+            formBody.push(encodeURIComponent('FI'+prop)+ "=" +encodeURIComponent(selectedOption_srv_spec[prop]['value']));
         }
         formBody = formBody.join("&");
-        fetch('/api/clients/list', {
+        fetch('/api/srv_spec/list', {
             method: 'post',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
             body: formBody
         }).then(res => res.json())
-            .then(data => this.setState({client: data}))
+            .then(data => this.setState({srv_spec: data}))
             .catch(err => console.log("err: =" + err));
     };
     handleDataChange = ({ dataSize }) => {
         this.setState({ rowCount: dataSize });
     };
-    handleChange_services = selectedOption_services => {
-        this.setState({ selectedOption_services });
-        let formBody=[];
-        let formPrice=[];
-        for (let prop in selectedOption_services){
-            formBody.push(encodeURIComponent('name') + "=" + encodeURIComponent(selectedOption_services[prop]['value']));
-        }
-        formBody = formBody.join("&");
-        fetch('/api/service/list', {
-                method: 'post',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: formBody
-            }).then(res => res.json())
-                .then(data => this.setState({service: data}))
-                .then(db => {
-                    for (let prop in this.state.service){
-                        formPrice.push(encodeURIComponent('_id') + "=" + encodeURIComponent(this.state.service[prop]));
-                    }
-                    formPrice = formPrice.join("&");
-                        fetch('/api/fix/price', {
-                            method: 'post',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded'
-                            },
-                            body: formPrice
-                        }).then(res => res.json())
-                            .then(data => this.setState({price: data}))
-                }
-                )
-                .catch(err => console.log("err: =" + err));
-
-    };
     handleSubmit = (e) =>{
+        this.handleChange_srv_spec();
         e.preventDefault();
         let formBody = [];
         for (let prop in this.state) {
@@ -123,6 +92,7 @@ class Add_fix extends Component{
             formBody.push(encodedKey + "=" + encodedValue);
         }
         formBody = formBody.join("&");
+        console.log(formBody);
         fetch('/api/fix', {
             method: 'post',
             headers: {
@@ -135,21 +105,15 @@ class Add_fix extends Component{
     };
     render() {
         const { selectedOption_objects } = this.state;
-        const { selectedOption_clients } = this.state;
-        const { selectedOption_services } = this.state;
+        const { selectedOption_srv_spec } = this.state;
         if (this.state.objects_list === null){
             fetch('/api/objects/list').then(res => res.json())
                 .then(data => this.setState({objects_list: data}))
                 .catch(err => console.log("err: =" + err));
         }
-        if (this.state.clients_list === null){
-            fetch('/api/clients/list').then(res => res.json())
-                .then(data => this.setState({clients_list: data}))
-                .catch(err => console.log("err: =" + err));
-        }
-        if (this.state.services_list === null){
-            fetch('/api/service/list').then(res => res.json())
-                .then(data => this.setState({services_list: data}))
+        if (this.state.srv_spec_list === null){
+            fetch('/api/srv_spec/list').then(res => res.json())
+                .then(data => this.setState({srv_spec_list: data}))
                 .catch(err => console.log("err: =" + err));
         }
         if (get_cookie('Authorized') === null){
@@ -167,17 +131,6 @@ class Add_fix extends Component{
                     <div>
                         <form id='divToPrint' className="form-horizontal" onSubmit={this.handleSubmit}>
                             <div className={`form-group input-group`}>
-                                <label htmlFor="service" className='col-sm-3'>Вид услуги </label>
-                                <Select
-                                    className='col-sm-8'
-                                    placeholder="Выберете услуги"
-                                    value={selectedOption_services}
-                                    onChange={this.handleChange_services}
-                                    options={this.state.services_list}
-                                    isMulti={true}
-                                />
-                            </div>
-                            <div className={`form-group input-group`}>
                                 <label htmlFor="object" className='col-sm-3'>Объект обслуживания </label>
                                    <Select
                                         className='col-sm-8'
@@ -188,41 +141,57 @@ class Add_fix extends Component{
                                     />
                             </div>
                             <div className={`form-group input-group`}>
-                                <label htmlFor="client" className='col-sm-3'>Клиент </label>
+                                <label htmlFor="srv_spec" className='col-sm-3'>Сервисные специалисты </label>
                                    <Select
+                                        isMulti
                                         className='col-sm-8'
-                                        placeholder="Выберите клиента"
-                                        value={selectedOption_clients}
-                                        onChange={this.handleChange_clients}
-                                        options={this.state.clients_list}
+                                        placeholder="Сервисный специалист"
+                                        value={selectedOption_srv_spec}
+                                        onChange={this.handleChange_srv_spec}
+                                        options={this.state.srv_spec_list}
                                     />
                             </div>
                             <div className={`form-group input-group`}>
-                                <label htmlFor="dateStart" className='col-sm-3'>Дата начала работ</label>
+                                <label htmlFor="dateStart" className='col-sm-3'>Дата</label>
                                 <input type="date" required className="form-control col-sm-8" name="dateStart"
                                        value={this.state.dateStart}
                                        onChange={this.handleUserInput}/>
                             </div>
                             <div className={`form-group input-group`}>
-                                <label htmlFor="dateCirca" className='col-sm-3'>Примерное время выполнения работ</label>
-                                <input type="text" required className="form-control col-sm-8" name="dateCirca"
-                                       placeholder="Пример 1 месяц(день, час, год)"
-                                       value={this.state.dateCirca}
+                                <label htmlFor="print" className='col-sm-3'>Номер печати</label>
+                                <input type="number" className="form-control col-sm-8" name="print"
+                                       placeholder="Номер печати"
+                                       value={this.state.print}
                                        onChange={this.handleUserInput}/>
-                            </div>
-                            <div className={`form-group input-group`}>
-                                <label htmlFor="price" className='col-sm-3'>Цена</label>
-                                <input type="number" required className="form-control col-sm-8" name="price"
-                                       placeholder="price"
-                                       value={this.state.price}
-                                       disabled
-                                       />
-                            </div>
-                            <div className={`form-group input-group`}>
-                                <label htmlFor="etc" className='col-sm-3'>Примечание</label>
-                                <input type="text" className="form-control col-sm-8" name="etc"
-                                       placeholder="Примечание"
-                                       value={this.state.etc}
+                            </div><div className={`form-group input-group`}>
+                                <label htmlFor="port_obs" className='col-sm-3'>Порт обслуживания</label>
+                                <input type="text" className="form-control col-sm-8" name="port_obs"
+                                       placeholder="Порт обслуживания"
+                                       value={this.state.port_obs}
+                                       onChange={this.handleUserInput}/>
+                            </div><div className={`form-group input-group`}>
+                                <label htmlFor="text_body" className='col-sm-3'>Тело акта</label>
+                                <textarea className="form-control col-sm-8" name="text_body"
+                                       placeholder="Тело акта"
+                                       value={this.state.text_body}
+                                       onChange={this.handleUserInput}/>
+                            </div><div className={`form-group input-group`}>
+                                <label htmlFor="time" className='col-sm-3'>Потраченнное время</label>
+                                <input type="time" className="form-control col-sm-8" name="time"
+                                       placeholder="Потраченнное время"
+                                       value={this.state.time}
+                                       onChange={this.handleUserInput}/>
+                            </div><div className={`form-group input-group`}>
+                                <label htmlFor="equiment" className='col-sm-3'>equiment</label>
+                                <textarea  className="form-control col-sm-8" name="equiment"
+                                       placeholder="Оборудование"
+                                       value={this.state.equiment}
+                                       onChange={this.handleUserInput}/>
+                            </div><div className={`form-group input-group`}>
+                                <label htmlFor="materials" className='col-sm-3'>Использованные материалы</label>
+                                <textarea  className="form-control col-sm-8" name="materials"
+                                       placeholder="Использованные материалы"
+                                       value={this.state.materials}
                                        onChange={this.handleUserInput}/>
                             </div>
                             <input type="submit" className="btn btn-primary btn-dark" onSubmit={this.handleSubmit}

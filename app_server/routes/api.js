@@ -43,7 +43,7 @@ router.post('/signup', function(req, res) {
               middle_name: req.body.middle_name,
               username: req.body.username,
               password: req.body.password,
-              position: 'Администратор'
+              position: 'Сервисный специалист'
             });
           }
           newUser.save(function(err) {
@@ -276,7 +276,6 @@ router.post('/clients', function(req, res) {
     let newClient = new client({
       name: req.body.name,
       type: req.body.type,
-      contacts: req.body.contacts,
       current_master_id: req.cookies.id,
     });
 
@@ -368,9 +367,6 @@ router.patch('/clients/upgrade', function (req, res) {
       }
       if(req.body.type){
         client.type = req.body.type;
-      }
-      if(req.body.contacts){
-        client.contacts = req.body.contacts;
       }
       client.save((err, data) => {
         if(err){
@@ -510,37 +506,55 @@ router.patch('/objects/upgrade', function (req, res) {
 
 
 router.post('/fix', function(req, res) {
-  let token = req.cookies.Authorized;
-  if (token !== null) {
-    let newFix = new Fix({
-      master: req.cookies.id,
-      service: req.body.service,
-      object: req.body.object,
-      client: req.body.client,
-      dateStart: req.body.dateStart,
-      dateCirca: req.body.dateCirca,
-      dateEnd: req.body.dateEnd,
-      price: req.body.price,
-      status: req.body.status,
-      etc: req.body.etc
-    });
-    newFix.save(function(err) {
-      if (err) {
-        return res.json({success: false, msg: 'Save Service failed.'});
-      }
-      res.json({success: true, msg: 'Successful created new Service.',_id:  newFix._id});
-    });
-  } else {
-    return res.status(403).send({success: false, msg: 'Unauthorized.'});
-  }
+  let num = 0;
+  Fix.find({
+  },function (err, fx) {
+    num = fx.length + 1;
+  }) .then(db =>{
+    let token = req.cookies.Authorized;
+    if (token !== null) {
+      let newFix = new Fix({
+        number: num,
+        master: req.body.srv_spec,
+        object: req.body.object,
+        client: req.body.client,
+        dateS: req.body.dateStart,
+        port_obs: req.body.port_obs,
+        text_body: req.body.text_body,
+        time: req.body.time,
+        equiment: req.body.equiment,
+        serial_nomber: req.body.serial_nomber,
+        materials_name: req.body.materials_name,
+        materials_units: req.body.materials_units,
+        materials_qty: req.body.materials_qty,
+        print: req.body.print,
+      });
+
+      newFix.save(function(err) {
+        if (err) {
+          return res.json({success: false, msg: 'Save Service failed.'});
+        }
+        res.json({success: true, msg: 'Successful created new Service.',_id:  newFix._id});
+      });
+    } else {
+      return res.status(403).send({success: false, msg: 'Unauthorized.'});
+    }
+  });
 });
 
 router.get('/fix', function(req, res) {
   let token = req.cookies.Authorized;
   let mass = [];
+  let num = 0;
+  let usr = {
+    name: []
+  };
   if (token !== null) {
     Fix.find({
-    master: req.cookies.id
+      master: {
+        $regex: ".*"+req.cookies.id+".*" ,
+        $options: 'i'
+      }
     },function (err, obj){
       mass = obj;
       for (let prop in mass){
@@ -551,37 +565,26 @@ router.get('/fix', function(req, res) {
           _id: false
         }, function (err, objects) {
           mass[prop]['object'] = objects['name'];
-          User.findById({
-            _id: mass[prop]['master']
-          },{
-            last_name: true,
-            name: true,
-            middle_name: true,
-            _id: true
-          }, function (err, users) {
-            mass[prop]['master'] = users['last_name']+' '+users['name']+' '+users['middle_name'];
-            client.findById({
-              _id: mass[prop]['client']
+          for (let nm in mass[prop]['master'].split(',')){
+            User.findById({
+              _id: mass[prop]['master'].split(',')[nm]
             },{
+              last_name: true,
               name: true,
-              _id: false
-            }, function (err, clients) {
-              mass[prop].client = clients.name;
-              Service.find({
-                _id: mass[prop]['service'].split(',')
-              },{
-                name: true,
-                _id: false
-              }, function (err, Service) {
-                let buffer = [];
-                for (let param in Service){
-                  buffer.push(Service[param]['name']);
-                }
-                mass[prop].service = buffer.join("\n");
-              })
+              middle_name: true,
+              _id: true
+            }, function (err, users) {
+              usr['name'][num] = users['last_name']+' '+users['name']+' '+users['middle_name'];
+              num++;
+              if (usr.name.length === mass[prop]['master'].split(',').length){
+                num = 0;
+                mass[prop]['master'] = usr.name.join();
+                usr.name = [];
+              }
             })
-          })
-        }).catch(err => res.json(err));
+          }
+        })
+            .catch(err => res.json(err));
 
       }
 
@@ -595,12 +598,13 @@ router.get('/fix', function(req, res) {
 router.get('/fix/all', function(req, res) {
   let token = req.cookies.Authorized;
   let mass = [];
+  let num = 0;
+  let usr = {
+    name: []
+  };
   if (token !== null) {
-    Fix.find({
-
-    },function (err, obj){
+    Fix.find({},function (err, obj){
       mass = obj;
-
       for (let prop in mass){
         Object.findById({
           _id: mass[prop]['object']
@@ -609,40 +613,31 @@ router.get('/fix/all', function(req, res) {
           _id: false
         }, function (err, objects) {
           mass[prop]['object'] = objects['name'];
-          User.findById({
-            _id: mass[prop]['master']
-          },{
-            last_name: true,
-            name: true,
-            middle_name: true,
-            _id: false
-          }, function (err, users) {
-            mass[prop]['master'] = users['last_name']+' '+users['name']+' '+users['middle_name'];
-            client.findById({
-              _id: mass[prop]['client']
+          for (let nm in mass[prop]['master'].split(',')){
+            User.findById({
+              _id: mass[prop]['master'].split(',')[nm]
             },{
+              last_name: true,
               name: true,
-              _id: false
-            }, function (err, clients) {
-              mass[prop].client = clients.name;
-              Service.find({
-                _id: mass[prop]['service'].split(',')
-              },{
-                name: true,
-                _id: false
-              }, function (err, Service) {
-                let buffer = [];
-                for (let param in Service){
-                  buffer.push(Service[param]['name']);
-                }
-                mass[prop].service = buffer.join("\n");
-              })
+              middle_name: true,
+              _id: true
+            }, function (err, users) {
+              usr['name'][num] = users['last_name']+' '+users['name']+' '+users['middle_name'];
+              num++;
+              if (usr.name.length === mass[prop]['master'].split(',').length){
+                num = 0;
+                mass[prop]['master'] = usr.name.join();
+                usr.name = [];
+              }
             })
-          })
+          }
         })
-            .catch(err => res.json(err))
+            .catch(err => res.json(err));
+
       }
+
     }).then(db => setTimeout(dt =>  res.json(mass),100));
+
   } else {
     return res.status(403).send({success: false, msg: 'Unauthorized.'});
   }
@@ -729,17 +724,18 @@ router.get('/objects/list', function(req, res) {
   }
 });
 
-router.get('/clients/list', function(req, res) {
+router.get('/srv_spec/list', function(req, res) {
   let token = req.cookies;
   let list = [];
   if (token !== null) {
-    client.find({},{
+    User.find({},{
+      last_name: true,
       name: true,
       _id: false
-    }, function (err, client){
+    }, function (err, srv_spec){
       if (err) return next(err);
-      for(let prop in client){
-        list.push({value: client[prop].name, label: client[prop].name})
+      for(let prop in srv_spec){
+        list.push({value: srv_spec[prop].last_name+' '+srv_spec[prop].name, label: srv_spec[prop].last_name + ' '+srv_spec[prop].name})
       }
       res.json(list);
     });
@@ -790,26 +786,33 @@ router.post('/objects/list', function(req, res) {
   }
 });
 
-router.post('/clients/list', function(req, res) {
+router.post('/srv_spec/list', function(req, res) {
   let token = req.cookies;
   let list = [];
   if (token !== null) {
-    client.find({
-      name: req.body.name
-    },{
-      _id: true
-    }, function (err, client){
-      if (err) return next(err);
-      for(let prop in client){
-        list.push(client[prop]._id)
-      }
+    for (let properties in req.body){
+      let fio_value = req.body[properties].split(' ');
+        User.find({
+          last_name: fio_value[0],
+          name: fio_value[1]
+        }, {
+          _id: true
+        }, function (err, user) {
+              if (err) return next(err);
+              for(let prop in user){
+                list.push(user[prop]._id)
+              }
+        });
+
+    }
+    setTimeout(rs =>{
       res.json(list);
-    });
+    },1000)
+
   } else {
     return res.status(403).send({success: false, msg: 'Unauthorized.'});
   }
-});
-
+    });
 router.post('/service/list', function(req, res) {
   let token = req.cookies;
   let list = [];
@@ -852,25 +855,25 @@ router.post('/fix/price', function(req, res) {
 });
 
 //получение услуг для чека и их цены
-router.post('/check', function(req, res) {
-  let token = req.cookies;
-  if (token !== null) {
-    Fix.find({
-    _id: req.body.id_new_fix
-    },function (err, obj){
-      if (err) return next(err);
-      Service.find({
-        _id: obj[0].service.split(',')
-      },function (err, service) {
-        if (err) return next(err);
-        res.json(service);
-      })
-    });
-  } else {
-    return res.status(403).send({success: false, msg: 'Unauthorized.'});
-  }
-});
-//получение заказчика и объекта по ид
+// router.post('/check', function(req, res) {
+//   let token = req.cookies;
+//   if (token !== null) {
+//     Fix.find({
+//     _id: req.body.id_new_fix
+//     },function (err, obj){
+//       if (err) return next(err);
+//       User.find({
+//         _id: obj[0].service.split(',')
+//       },function (err, service) {
+//         if (err) return next(err);
+//         res.json(service);
+//       })
+//     });
+//   } else {
+//     return res.status(403).send({success: false, msg: 'Unauthorized.'});
+//   }
+// });
+//получение объекта по ид
 router.post('/check/names', function(req, res) {
   let token = req.cookies;
   let names = [];
@@ -884,16 +887,6 @@ router.post('/check/names', function(req, res) {
       },{
         name: true,
         _id: false
-      }, function (err, objects) {
-        names.push(objects['name']);
-        client.findById({
-          _id: obj[0]['client']
-        },{
-          name: true,
-          _id: false
-        }, function (err, clients) {
-          names.push(clients.name);
-        }).then(db => setTimeout(dt =>  res.json(names),100))
       })
     })
   } else {

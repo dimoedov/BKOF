@@ -17,7 +17,6 @@ class Add_client extends Component{
         this.state= {
             name: '',
             type: '',
-            contacts: '',
 
             serverOtvet: ''
         }
@@ -78,13 +77,6 @@ class Add_client extends Component{
                                 <input type="text" required className="form-control col-sm-8" name="name"
                                        placeholder="ФИО предтставителя"
                                        value={this.state.name}
-                                       onChange={this.handleUserInput}/>
-                            </div>
-                            <div className={`form-group input-group row`}>
-                                <label htmlFor="contacts" className='col-sm-3'>Контактные данные</label>
-                                <input type="text" required className="form-control col-sm-8" name="contacts"
-                                       placeholder="Контакты"
-                                       value={this.state.contacts}
                                        onChange={this.handleUserInput}/>
                             </div>
 

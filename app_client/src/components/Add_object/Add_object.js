@@ -59,7 +59,7 @@ class Add_object extends Component{
             return (
                 <div>
                     <div>
-                        <h1  className='text-center text-dark'>Добавление Объекта обслуживания</h1>
+                        <h1  className='text-center text-dark'>Добавление судна</h1>
                     </div>
                     <div>
                         <form className="form-horizontal" onSubmit={this.handleSubmit}>
@@ -92,7 +92,7 @@ class Add_object extends Component{
                             </div>
                             <div className={`form-group row input-group`}>
                                 <label htmlFor="calls_obj" className='col-sm-3'>Позывной</label>
-                                <input type="text" required className="form-control col-sm-8" name="calls_obj"
+                                <input type="text" className="form-control col-sm-8" name="calls_obj"
                                        placeholder="Позывной"
                                        value={this.state.calls_obj}
                                        onChange={this.handleUserInput}/>

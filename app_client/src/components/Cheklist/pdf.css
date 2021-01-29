@@ -71,6 +71,45 @@
     border-top: 2px solid #eee;
     font-weight: bold;
 }
+.own_table {
+    font-family: "Times New Roman", serif;
+    font-size: 12pt;
+    width: 100%;
+    padding-top: 13mm;
+}
+.td_left {
+    padding-top: 1.3cm;
+    width: 33%;
+    padding-left: 15mm;
+}
+.td_left p{
+    font-family: "Times New Roman", serif;
+    font-size: 11pt;
+    text-align: left;
+    width: 100%;
+    margin: 0;
+
+}
+
+.td_right {
+    width: 33%;
+    padding-top: 1.3cm;
+    padding-right: 6mm;
+}
+.td_right p {
+    font-family: "Times New Roman", serif;
+    font-size: 11pt;
+    text-align: right;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+.td_logo {
+    padding-top: 1.3cm;
+    width: 33%;
+}
+.td_logo p{
+
+}
 @media only screen and (max-width: 600px) {
     .invoice-box table tr.top table td {
         width: 100%;

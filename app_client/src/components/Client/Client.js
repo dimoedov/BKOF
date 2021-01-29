@@ -166,66 +166,6 @@ class Client extends Component{
                         .catch(err => this.setState({serverOtvet: err}));
                     return true;
                 }
-            },
-            {
-                dataField: 'contacts',
-                text: 'Контакные данные',
-                sort: true,
-                selected: false,
-                validator: (newValue, row, column) => {
-                    if (localStorage.getItem('position') !== 'Администратор'){
-                        if (row.current_master_id !== get_cookie('id').split('"')[1]){
-                            return {
-                                valid: false,
-                                message: 'У вас нет прав на изменение данной строки'
-                            }
-                        }
-                    }
-                    if (!regExpContact.test(newValue)) {
-                        return {
-                            valid: false,
-                            message: 'Поле принимает только номер телефона или почту'
-                        };
-                    }
-                    formBody = [];
-                    for (let prop in row) {
-                        if (prop === 'contacts'){
-                            if (prop === column.dataField){
-                                let encodedKey = encodeURIComponent(prop);
-                                let encodedValue = encodeURIComponent(newValue);
-                                formBody.push(encodedKey + "=" + encodedValue);
-                            }else {
-                                let encodedKey = encodeURIComponent(prop);
-                                let encodedValue = encodeURIComponent(row[prop]);
-                                formBody.push(encodedKey + "=" + encodedValue);
-                            }
-                        }
-                        if (prop === '_id'){
-                            if (prop === column.dataField){
-                                let encodedKey = encodeURIComponent(prop);
-                                let encodedValue = encodeURIComponent(newValue);
-                                formBody.push(encodedKey + "=" + encodedValue);
-                            }else {
-                                let encodedKey = encodeURIComponent(prop);
-                                let encodedValue = encodeURIComponent(row[prop]);
-                                formBody.push(encodedKey + "=" + encodedValue);
-                            }
-                        }
-
-                    }
-                    formBody = formBody.join("&");
-                    fetch('/api/clients/upgrade', {
-                        method: 'PATCH',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body:formBody
-                    }).then(res => res.json())
-                        .then(data => this.setState({serverOtvet: data}))
-                        .then(db =>  window.location.assign('http://localhost:3000/clients'))
-                        .catch(err => this.setState({serverOtvet: err}));
-                    return true;
-                }
             }],
         selected: []
     };

@@ -29,129 +29,129 @@ const MyExportCSV = (props) => {
 };
 
 
-class MYSELECT_SERVICES extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state= {
-            _id: '',
-            number: '',
-            object: '',
-            port_obs: '',
-            client: '',
-            date: '',
-            time: '',
-            equiment: '',
-            serial_nomber: '',
-            materials_name: '',
-            materials_units: '',
-            materials_qty: '',
-            etc: '',
-            services_list: null,
-            selectedOption_services: [],
-            serverOtvet: ''
-        }
-    }
-    handleSubmit = (e) =>{
-        e.preventDefault();
-        let formBody = [];
-        for (let prop in this.state) {
-            let encodedKey = encodeURIComponent(prop);
-            let encodedValue = encodeURIComponent(this.state[prop]);
-            formBody.push(encodedKey + "=" + encodedValue);
-        }
-        formBody = formBody.join("&");
-        fetch('/api/fix/upgrade', {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: formBody
-        }).then(res => res.json())
-            .then(data =>  window.location.assign('http://localhost:3000/my_fix/'))
-            .catch(err => console.log("err: =" + err));
-    };
-
-    handleChange_services = selectedOption_services => {
-        this.setState({ selectedOption_services });
-        let formBody=[];
-        let formPrice=[];
-        for (let prop in selectedOption_services){
-            formBody.push(encodeURIComponent('name') + "=" + encodeURIComponent(selectedOption_services[prop]['value']));
-        }
-        formBody = formBody.join("&");
-        fetch('/api/service/list', {
-            method: 'post',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: formBody
-        }).then(res => res.json())
-            .then(data => this.setState({service: data}))
-            .then(db => {
-                    for (let prop in this.state.service){
-                        formPrice.push(encodeURIComponent('_id') + "=" + encodeURIComponent(this.state.service[prop]));
-                    }
-                    formPrice = formPrice.join("&");
-                    fetch('/api/fix/price', {
-                        method: 'post',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: formPrice
-                    }).then(res => res.json())
-                        .then(data => this.setState({price: data}))
-                }
-            )
-            .catch(err => console.log("err: =" + err));
-    };
-
-    render() {
-        let data_services = this.props.value.split("\n");
-        const {selectedOption_services} = this.state;
-        if (this.state.services_list === null) {
-            fetch('/api/service/list').then(res => res.json())
-                .then(data => this.setState({services_list: data}))
-                .catch(err => console.log("err: =" + err));
-            let formBody=[];
-            for (let prop in selectedOption_services){
-                formBody.push(encodeURIComponent('name') + "=" + encodeURIComponent(selectedOption_services[prop]['value']));
-            }
-            formBody = formBody.join("&");
-            fetch('/api/service/list', {
-                method: 'post',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: formBody
-            }).then(res => res.json())
-                .then(data => this.setState({service: data}))
-                .then(di => this.setState({_id: this.props._id}))
-                .catch(err => console.log("err: =" + err));
-        }
-        if (this.state.selectedOption_services.length === 0) {
-            for (let i in data_services) {
-                this.state.selectedOption_services.push({
-                    value: data_services[i],
-                    label: data_services[i]
-                })
-            }
-        }
-        return (
-            <div>
-                <Select
-                    placeholder="Выберете услуги"
-                    value={selectedOption_services}
-                    onChange={this.handleChange_services}
-                    options={this.state.services_list}
-                    isMulti={true}
-                />
-                <button onClick={this.handleSubmit}>Изменить</button>
-            </div>
-
-        )
-    }
-
-}
+// class MYSELECT_SERVICES extends React.Component {
+//     constructor(props) {
+//         super(props);
+//         this.state= {
+//             _id: '',
+//             number: '',
+//             object: '',
+//             port_obs: '',
+//             client: '',
+//             date: '',
+//             time: '',
+//             equiment: '',
+//             serial_nomber: '',
+//             materials_name: '',
+//             materials_units: '',
+//             materials_qty: '',
+//             etc: '',
+//             services_list: null,
+//             selectedOption_services: [],
+//             serverOtvet: ''
+//         }
+//     }
+//     handleSubmit = (e) =>{
+//         e.preventDefault();
+//         let formBody = [];
+//         for (let prop in this.state) {
+//             let encodedKey = encodeURIComponent(prop);
+//             let encodedValue = encodeURIComponent(this.state[prop]);
+//             formBody.push(encodedKey + "=" + encodedValue);
+//         }
+//         formBody = formBody.join("&");
+//         fetch('/api/fix/upgrade', {
+//             method: 'PATCH',
+//             headers: {
+//                 'Content-Type': 'application/x-www-form-urlencoded'
+//             },
+//             body: formBody
+//         }).then(res => res.json())
+//             .then(data =>  window.location.assign('http://localhost:3000/my_fix/'))
+//             .catch(err => console.log("err: =" + err));
+//     };
+//
+//     handleChange_services = selectedOption_services => {
+//         this.setState({ selectedOption_services });
+//         let formBody=[];
+//         let formPrice=[];
+//         for (let prop in selectedOption_services){
+//             formBody.push(encodeURIComponent('name') + "=" + encodeURIComponent(selectedOption_services[prop]['value']));
+//         }
+//         formBody = formBody.join("&");
+//         fetch('/api/service/list', {
+//             method: 'post',
+//             headers: {
+//                 'Content-Type': 'application/x-www-form-urlencoded'
+//             },
+//             body: formBody
+//         }).then(res => res.json())
+//             .then(data => this.setState({service: data}))
+//             .then(db => {
+//                     for (let prop in this.state.service){
+//                         formPrice.push(encodeURIComponent('_id') + "=" + encodeURIComponent(this.state.service[prop]));
+//                     }
+//                     formPrice = formPrice.join("&");
+//                     fetch('/api/fix/price', {
+//                         method: 'post',
+//                         headers: {
+//                             'Content-Type': 'application/x-www-form-urlencoded'
+//                         },
+//                         body: formPrice
+//                     }).then(res => res.json())
+//                         .then(data => this.setState({price: data}))
+//                 }
+//             )
+//             .catch(err => console.log("err: =" + err));
+//     };
+//
+//     render() {
+//         let data_services = this.props.value.split("\n");
+//         const {selectedOption_services} = this.state;
+//         if (this.state.services_list === null) {
+//             fetch('/api/service/list').then(res => res.json())
+//                 .then(data => this.setState({services_list: data}))
+//                 .catch(err => console.log("err: =" + err));
+//             let formBody=[];
+//             for (let prop in selectedOption_services){
+//                 formBody.push(encodeURIComponent('name') + "=" + encodeURIComponent(selectedOption_services[prop]['value']));
+//             }
+//             formBody = formBody.join("&");
+//             fetch('/api/service/list', {
+//                 method: 'post',
+//                 headers: {
+//                     'Content-Type': 'application/x-www-form-urlencoded'
+//                 },
+//                 body: formBody
+//             }).then(res => res.json())
+//                 .then(data => this.setState({service: data}))
+//                 .then(di => this.setState({_id: this.props._id}))
+//                 .catch(err => console.log("err: =" + err));
+//         }
+//         if (this.state.selectedOption_services.length === 0) {
+//             for (let i in data_services) {
+//                 this.state.selectedOption_services.push({
+//                     value: data_services[i],
+//                     label: data_services[i]
+//                 })
+//             }
+//         }
+//         return (
+//             <div>
+//                 <Select
+//                     placeholder="Выберете услуги"
+//                     value={selectedOption_services}
+//                     onChange={this.handleChange_services}
+//                     options={this.state.services_list}
+//                     isMulti={true}
+//                 />
+//                 <button onClick={this.handleSubmit}>Изменить</button>
+//             </div>
+//
+//         )
+//     }
+//
+// }
 
 class MYSELECT_OBJECTS extends React.Component {
 
@@ -252,104 +252,104 @@ class MYSELECT_OBJECTS extends React.Component {
     }
 }
 
-class MYSELECT_CLIENTS extends React.Component {
-
-    constructor(props) {
-        super(props);
-        this.state= {
-            _id: '',
-            client: '',
-            status: '',
-            clients_list: null,
-            selectedOption_clients: [],
-            serverOtvet: ''
-        }
-    }
-    handleSubmit = (e) =>{
-        e.preventDefault();
-        let formBody = [];
-        for (let prop in this.state) {
-            let encodedKey = encodeURIComponent(prop);
-            let encodedValue = encodeURIComponent(this.state[prop]);
-            formBody.push(encodedKey + "=" + encodedValue);
-        }
-        formBody = formBody.join("&");
-        fetch('/api/fix/upgrade', {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: formBody
-        }).then(res => res.json())
-            .then(data =>  window.location.assign('http://localhost:3000/my_fix/'))
-            .catch(err => console.log("err: =" + err));
-    };
-
-    handleChange_clients = selectedOption_clients => {
-        this.setState({ selectedOption_clients });
-        console.log(selectedOption_clients);
-        let formBody=[];
-        for (let prop in selectedOption_clients){
-            formBody.push(encodeURIComponent('name') + "=" + encodeURIComponent(selectedOption_clients[prop]['value']));
-        }
-        formBody = formBody.join("&");
-        fetch('/api/clients/list', {
-            method: 'post',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: formBody
-        }).then(res => res.json())
-            .then(data => this.setState({object: data}))
-            .catch(err => console.log("err: =" + err));
-    };
-
-    render() {
-        let data_clients = this.props.value.split("\n");
-        const {selectedOption_clients} = this.state;
-        if (this.state.clients_list === null) {
-            fetch('/api/clients/list').then(res => res.json())
-                .then(data => this.setState({clients_list: data}))
-                .catch(err => console.log("err: =" + err));
-            let formBody=[];
-            for (let prop in selectedOption_clients){
-                formBody.push(encodeURIComponent('name') + "=" + encodeURIComponent(selectedOption_clients[prop]['value']));
-            }
-            formBody = formBody.join("&");
-            fetch('/api/clients/list', {
-                method: 'post',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: formBody
-            }).then(res => res.json())
-                .then(data => this.setState({client: data}))
-                .then(di => this.setState({_id: this.props._id}))
-                .catch(err => console.log("err: =" + err));
-        }
-        if (this.state.selectedOption_clients.length === 0) {
-            for (let i in data_clients) {
-                this.state.selectedOption_clients.push({
-                    value: data_clients[i],
-                    label: data_clients[i]
-                })
-            }
-        }
-        return (
-            <div>
-                <Select
-                    placeholder="Выберете объект"
-                    value={selectedOption_clients}
-                    onChange={this.handleChange_clients}
-                    options={this.state.clients_list}
-                    isMulti={false}
-                />
-                <button onClick={this.handleSubmit}>Изменить</button>
-            </div>
-
-        )
-    }
-}
+// class MYSELECT_CLIENTS extends React.Component {
+//
+//     constructor(props) {
+//         super(props);
+//         this.state= {
+//             _id: '',
+//             client: '',
+//             status: '',
+//             clients_list: null,
+//             selectedOption_clients: [],
+//             serverOtvet: ''
+//         }
+//     }
+//     handleSubmit = (e) =>{
+//         e.preventDefault();
+//         let formBody = [];
+//         for (let prop in this.state) {
+//             let encodedKey = encodeURIComponent(prop);
+//             let encodedValue = encodeURIComponent(this.state[prop]);
+//             formBody.push(encodedKey + "=" + encodedValue);
+//         }
+//         formBody = formBody.join("&");
+//         fetch('/api/fix/upgrade', {
+//             method: 'PATCH',
+//             headers: {
+//                 'Content-Type': 'application/x-www-form-urlencoded'
+//             },
+//             body: formBody
+//         }).then(res => res.json())
+//             .then(data =>  window.location.assign('http://localhost:3000/my_fix/'))
+//             .catch(err => console.log("err: =" + err));
+//     };
+//
+//     handleChange_clients = selectedOption_clients => {
+//         this.setState({ selectedOption_clients });
+//         console.log(selectedOption_clients);
+//         let formBody=[];
+//         for (let prop in selectedOption_clients){
+//             formBody.push(encodeURIComponent('name') + "=" + encodeURIComponent(selectedOption_clients[prop]['value']));
+//         }
+//         formBody = formBody.join("&");
+//         fetch('/api/clients/list', {
+//             method: 'post',
+//             headers: {
+//                 'Content-Type': 'application/x-www-form-urlencoded'
+//             },
+//             body: formBody
+//         }).then(res => res.json())
+//             .then(data => this.setState({object: data}))
+//             .catch(err => console.log("err: =" + err));
+//     };
+//
+//     render() {
+//         let data_clients = this.props.value.split("\n");
+//         const {selectedOption_clients} = this.state;
+//         if (this.state.clients_list === null) {
+//             fetch('/api/clients/list').then(res => res.json())
+//                 .then(data => this.setState({clients_list: data}))
+//                 .catch(err => console.log("err: =" + err));
+//             let formBody=[];
+//             for (let prop in selectedOption_clients){
+//                 formBody.push(encodeURIComponent('name') + "=" + encodeURIComponent(selectedOption_clients[prop]['value']));
+//             }
+//             formBody = formBody.join("&");
+//             fetch('/api/clients/list', {
+//                 method: 'post',
+//                 headers: {
+//                     'Content-Type': 'application/x-www-form-urlencoded'
+//                 },
+//                 body: formBody
+//             }).then(res => res.json())
+//                 .then(data => this.setState({client: data}))
+//                 .then(di => this.setState({_id: this.props._id}))
+//                 .catch(err => console.log("err: =" + err));
+//         }
+//         if (this.state.selectedOption_clients.length === 0) {
+//             for (let i in data_clients) {
+//                 this.state.selectedOption_clients.push({
+//                     value: data_clients[i],
+//                     label: data_clients[i]
+//                 })
+//             }
+//         }
+//         return (
+//             <div>
+//                 <Select
+//                     placeholder="Выберете объект"
+//                     value={selectedOption_clients}
+//                     onChange={this.handleChange_clients}
+//                     options={this.state.clients_list}
+//                     isMulti={false}
+//                 />
+//                 <button onClick={this.handleSubmit}>Изменить</button>
+//             </div>
+//
+//         )
+//     }
+// };
 
 let formBody = [];
 class My_fix extends Component{
@@ -365,22 +365,12 @@ class My_fix extends Component{
             {
                 dataField: 'master',
                 text: 'ФИО мастера',
-                hidden: true
             },
             {
                 dataField: 'number',
                 text: 'Номер',
                 ort: true,
                 selected: false,
-            },
-            {
-                dataField: 'service',
-                text: 'Вид услуги',
-                sort: true,
-                selected: false,
-                editorRenderer: (editorProps, value, row, column, rowIndex, columnIndex) => (
-                    <MYSELECT_SERVICES value={value} _id = {row._id}/>
-                )
             },
             {
                 dataField: 'object',
@@ -392,17 +382,8 @@ class My_fix extends Component{
                 )
             },
             {
-                dataField: 'client',
-                text: 'Клиент',
-                sort: true,
-                selected: false,
-                editorRenderer: (editorProps, value, row, column, rowIndex, columnIndex) => (
-                    <MYSELECT_CLIENTS value = {value} _id = {row._id}/>
-                )
-            },
-            {
-                dataField: 'dateStart',
-                text: 'Дата начала',
+                dataField: 'dateS',
+                text: 'Дата',
                 sort: true,
                 selected: false,
                 editor: {
@@ -450,130 +431,69 @@ class My_fix extends Component{
                 },
             },
             {
-                dataField: 'dateCirca',
-                text: 'Примерная дата выполнения',
+                dataField: 'port_obs',
+                text: 'Порт обслуживания',
+                editable: false,
                 sort: true,
-                selected: false,
-                editable: false
             },
             {
-                dataField: 'dateEnd',
-                text: 'Дата окончания',
-                sort: true,
+                dataField: 'text_body',
+                text: 'Выполненные работы',
+                editable: true,
                 selected: false,
-                editor: {
-                    type: Type.DATE,
-                },
-                validator: (newValue, row, column) => {
-                    formBody = [];
-                    for (let prop in row) {
-                        if (prop === 'dateEnd'){
-                            if (prop === column.dataField){
-                                let encodedKey = encodeURIComponent(prop);
-                                let encodedValue = encodeURIComponent(newValue);
-                                formBody.push(encodedKey + "=" + encodedValue);
-                            }else {
-                                let encodedKey = encodeURIComponent(prop);
-                                let encodedValue = encodeURIComponent(row[prop]);
-                                formBody.push(encodedKey + "=" + encodedValue);
-                            }
-                        }
-                        if (prop === '_id'){
-                            if (prop === column.dataField){
-                                let encodedKey = encodeURIComponent(prop);
-                                let encodedValue = encodeURIComponent(newValue);
-                                formBody.push(encodedKey + "=" + encodedValue);
-                            }else {
-                                let encodedKey = encodeURIComponent(prop);
-                                let encodedValue = encodeURIComponent(row[prop]);
-                                formBody.push(encodedKey + "=" + encodedValue);
-                            }
-                        }
-
-                    }
-                    formBody = formBody.join("&");
-                    fetch('/api/fix/upgrade', {
-                        method: 'PATCH',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body:formBody
-                    }).then(res => res.json())
-                        .then(data => this.setState({serverOtvet: data}))
-                        .then(db =>  window.location.assign('http://localhost:3000/my_fix/'))
-                        .catch(err => console.log("err: =" + err));
-
-                },
-            },
-            {
-                dataField: 'price',
-                text: 'Цена',
+                hidden: true
+            },{
+                dataField: 'time',
+                text: 'Потраченное время',
                 editable: false,
                 sort: true,
                 selected: false,
-            },
-            {
-                dataField: 'status',
-                text: 'Статус услуги',
+            },{
+                dataField: 'equiment',
+                text: 'Прибор',
+                editable: false,
                 sort: true,
                 selected: false,
-                editable: false
-                // validator: (newValue, row, column) => {
-                //     if (!regExpStatus.test(newValue)) {
-                //         return {
-                //             valid: false,
-                //             message: 'Не правильно введён статус'
-                //         };
-                //     }
-                //     formBody = [];
-                //     for (let prop in row) {
-                //         if (prop === 'status'){
-                //             if (prop === column.dataField){
-                //                 let encodedKey = encodeURIComponent(prop);
-                //                 let encodedValue = encodeURIComponent(newValue);
-                //                 formBody.push(encodedKey + "=" + encodedValue);
-                //             }else {
-                //                 let encodedKey = encodeURIComponent(prop);
-                //                 let encodedValue = encodeURIComponent(row[prop]);
-                //                 formBody.push(encodedKey + "=" + encodedValue);
-                //             }
-                //         }
-                //         if (prop === '_id'){
-                //             if (prop === column.dataField){
-                //                 let encodedKey = encodeURIComponent(prop);
-                //                 let encodedValue = encodeURIComponent(newValue);
-                //                 formBody.push(encodedKey + "=" + encodedValue);
-                //             }else {
-                //                 let encodedKey = encodeURIComponent(prop);
-                //                 let encodedValue = encodeURIComponent(row[prop]);
-                //                 formBody.push(encodedKey + "=" + encodedValue);
-                //             }
-                //         }
-                //
-                //     }
-                //     formBody = formBody.join("&");
-                //     fetch('/api/fix/upgrade', {
-                //         method: 'PATCH',
-                //         headers: {
-                //             'Content-Type': 'application/x-www-form-urlencoded'
-                //         },
-                //         body:formBody
-                //     }).then(res => res.json())
-                //         .then(data => this.setState({serverOtvet: data}))
-                //         .then(db =>  window.location.assign('http://localhost:3000/my_fix/'))
-                //         .catch(err => console.log("err: =" + err));
-                //     return true;
-                // },
-            },
-            {
-                dataField: 'etc',
-                text: 'Примечание',
+            },{
+                dataField: 'materials',
+                text: 'Использованные материалы',
+                editable: false,
+                sort: true,
+                selected: false,
+            },{
+                dataField: 'print',
+                text: 'Номер печати',
                 editable: false,
                 sort: true,
                 selected: false,
             },
         ],
         selected: []
+    };
+    expandRow = {
+        onlyOneExpanding: true,
+        renderer: (row) => (
+            <div>
+                <p>{row.text_body}</p>
+            </div>
+        ),
+        showExpandColumn: true,
+        expandHeaderColumnRenderer: ({ isAnyExpands }) => {
+            if (isAnyExpands) {
+                return <b>-</b>;
+            }
+            return <b>+</b>;
+        },
+        expandColumnRenderer: ({ expanded }) => {
+            if (expanded) {
+                return (
+                    <b>-</b>
+                );
+            }
+            return (
+                <b>...</b>
+            );
+        }
     };
     componentDidMount() {
         fetch('/api/fix').then(res => res.json())
@@ -598,7 +518,7 @@ class My_fix extends Component{
             }).then(res => res.json())
                 .then(data => this.setState({serverOtvet: data}))
                 .catch(err => console.log("err: =" + err))
-                .then(del =>  window.location.assign('http://localhost:3000/my_fix'));
+                .then(del =>  window.location.assign('http://'+document.location.host+'/my_fix'));
 
         }
 
@@ -607,10 +527,6 @@ class My_fix extends Component{
         this.setState({ rowCount: dataSize });
     };
     handleOnSelect = (row, isSelect) => {
-        if ((isSelect) && (row.status !== 'В обработке')){
-            alert('Заявка не может быть удалена, уже идёт выполнение');
-            return false;
-        }
         if (isSelect) {
             this.setState(() => ({
                 selected: [...this.state.selected, row._id]
@@ -698,9 +614,11 @@ class My_fix extends Component{
                                                 pagination={ paginationFactory() }
                                                 selectRow={ selectRow }
                                                 hover
+                                                expandRow={ this.expandRow }
                                                 tabIndexCell
                                                 bordered={ false }
-                                                noDataIndication="У вас нет заявок"
+                                                // rowStyle={'width: 200px'}
+                                                noDataIndication="У вас нет актов"
 
                                                 { ...props.baseProps }
                                             />

@@ -1,34 +1,32 @@
 let mongoose = require('mongoose');
 let Schema = mongoose.Schema;
-
+let fix_number = 0;
 let FixSchema = new Schema({
-  number: {
+  number: { //
     type: String,
-    default: '000',
-    increment: 1,
     required: false,
   },
-  master: {
+  master: { //
     type: String,
     required: false
   },
-  object: {
+  object: { //
     type: String,
     required: false
   },
-  port_obs: {
+  port_obs: { //
     type: String,
     required: false
   },
-  client: {
+  text_body: { //
     type: String,
     required: false
   },
-  date: {
+  dateS: { //
     type: String,
     required: false
   },
-  time: {
+  time: { //
     type: String,
     required: false
   },
@@ -36,27 +34,14 @@ let FixSchema = new Schema({
     type: String,
     required: false
   },
-  serial_nomber: {
+  materials: {
     type: String,
     required: false
   },
-  materials_name: {
-    type: String,
-    required: false
-  },
-  materials_units: {
-    type: String,
-    required: false
-  },
-  materials_qty: {
-    type: String,
-    required: false
-  },
-  etc: {
-    type: String,
+  print: {
+    type: Number,
     required: false
   },
 
 });
-
 module.exports = mongoose.model('Fix', FixSchema);
