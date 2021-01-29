@@ -28,7 +28,7 @@ class Signout extends Component {
     render() {
         if (this.state.serverOtvet.success) {
             localStorage.clear();
-            window.location.assign('http://localhost:3000/');
+            window.location.assign('http://'+document.location.host);
         }
         if (get_cookie('Authorized') === null){
             return <Redirect to="/" />;

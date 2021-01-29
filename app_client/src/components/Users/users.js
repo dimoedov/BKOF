@@ -38,7 +38,6 @@ class Users extends Component{
             {
                 dataField: '_id',
                 isKey: true,
-                text: 'Номер услуги',
                 hidden: true,
                 selected: false,
 
@@ -86,7 +85,7 @@ class Users extends Component{
                         body:formBody
                     }).then(res => res.json())
                         .then(data => this.setState({serverOtvet: data}))
-                        .then(db =>  window.location.assign('http://localhost:3000/Users/'))
+                        .then(db =>  window.location.assign('http://'+document.location.host+'/Users/'))
                         .catch(err => console.log("err: =" + err));
                     return true;
                 },
